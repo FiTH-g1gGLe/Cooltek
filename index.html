@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cooltek – Heating Service Report</title>
+<meta name="theme-color" content="#1b1f5e">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="pages">
+  <!-- PAGE 1 -->
+  <section class="page" id="page1">
+    <header class="brand-head">
+      <img src="logo.png" alt="Cooltek" class="logo">
+      <div class="title"><span>Heating</span> Service Report</div>
+      <div class="stripes" aria-hidden="true"><i></i><i></i><i></i></div>
+    </header>
+
+    <div class="details">
+      <div class="col" id="details-left"></div>
+      <div class="col" id="details-right"></div>
+    </div>
+
+    <div class="two-col">
+      <div class="block">
+        <h2>Outdoor unit detail</h2>
+        <div id="outdoor"></div>
+      </div>
+      <div class="block">
+        <h2>Indoor unit detail</h2>
+        <div id="indoor"></div>
+      </div>
+    </div>
+    <div class="page-foot"><span class="pf-contact"></span><span>Page 1 of <b class="pcount">2</b></span></div>
+  </section>
+
+  <!-- PAGE 2 -->
+  <section class="page" id="page2">
+    <div class="two-col top">
+      <div>
+        <div class="block">
+          <h2>Electrical checks</h2>
+          <div id="electrical"></div>
+        </div>
+        <div class="block">
+          <h2>Unvented cylinder checks</h2>
+          <div id="unvented"></div>
+        </div>
+      </div>
+      <div>
+        <div class="block">
+          <h2>Heating system checks</h2>
+          <div id="heating"></div>
+        </div>
+        <div class="block">
+          <h2>Visit timings</h2>
+          <div id="timings"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col notes">
+      <div class="note">
+        <label for="f-workDone">Details of visit / work carried out</label>
+        <textarea id="f-workDone" data-key="workDone" rows="5"></textarea>
+        <div class="print-text" data-mirror="workDone"></div>
+      </div>
+      <div class="note">
+        <label for="f-conclusion">Conclusion / recommendations</label>
+        <textarea id="f-conclusion" data-key="conclusion" rows="5"></textarea>
+        <div class="print-text" data-mirror="conclusion"></div>
+      </div>
+    </div>
+
+    <div class="two-col sigs">
+      <div class="sig">
+        <div class="sig-head"><label>Engineer signature</label><button type="button" class="link no-print" data-clear-sig="sigEngineer">Clear</button></div>
+        <canvas data-sig="sigEngineer"></canvas>
+      </div>
+      <div class="sig">
+        <div class="sig-head"><label>Customer signature</label><button type="button" class="link no-print" data-clear-sig="sigCustomer">Clear</button></div>
+        <canvas data-sig="sigCustomer"></canvas>
+      </div>
+    </div>
+
+    <footer class="brand-foot">
+      <div class="stripes" aria-hidden="true"><i></i><i></i><i></i></div>
+      <img src="logo.png" alt="Cooltek" class="logo">
+      <div class="contact">
+        <b>01623 431028</b>
+        <span>info@coolteklimited.com</span>
+        <span>www.coolteklimited.com</span>
+      </div>
+    </footer>
+    <div class="page-foot"><span class="pf-contact"></span><span>Page 2 of <b class="pcount">2</b></span></div>
+  </section>
+
+  <!-- PHOTO PAGES are added here by app.js -->
+  <section class="page photos-page no-print-empty" id="photosEditor">
+    <div class="block">
+      <h2>Site visit images</h2>
+      <div class="photo-grid" id="photoGrid"></div>
+      <label class="add-photos no-print">
+        <input type="file" accept="image/*" multiple id="photoInput" hidden>
+        <span>+ Add site photos</span>
+      </label>
+    </div>
+  </section>
+</div>
+
+<nav class="toolbar no-print">
+  <button type="button" class="btn primary" id="btnPdf">Save as PDF</button>
+  <button type="button" class="btn" id="btnNewVisit" title="Keep customer, site and unit details, clear everything else">New visit</button>
+  <button type="button" class="btn ghost" id="btnClear">Clear all</button>
+  <span class="saved" id="savedNote"></span>
+</nav>
+
+<script src="app.js"></script>
+</body>
+</html>
