@@ -2,149 +2,140 @@
 <html lang="en-GB">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Cooltek – Heating Service Report</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cooltek | Air conditioning & heat pumps in Nottinghamshire</title>
+<meta name="description" content="Mitsubishi Electric approved installer of air conditioning and air source heat pumps for homes and businesses across Nottinghamshire. MCS accredited, 35+ years' experience.">
+<meta property="og:title" content="Cooltek | Air conditioning & heat pumps in Nottinghamshire">
+<meta property="og:description" content="Mitsubishi Electric approved installer of air conditioning and air source heat pumps for homes and businesses across Nottinghamshire. MCS accredited, 35+ years' experience.">
 <meta name="theme-color" content="#1b1f5e">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css">
+<link rel="icon" href="assets/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
 </head>
-<body>
+<body class="">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-head">
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="assets/logo.png" alt="Cooltek home" width="150" height="30"></a>
+    <button class="menu-btn" aria-expanded="false" aria-controls="nav" aria-label="Menu">☰</button>
+    <nav class="nav" id="nav"><a href="air-conditioning.html">Air conditioning</a><a href="heat-pumps.html">Heat pumps</a><a href="servicing.html">Servicing & repairs</a><a href="contact.html">Contact</a><a class="call" href="tel:+441623431028">Call 01623 431028</a></nav>
+  </div>
+</header>
+<main id="main">
 
-<div id="pages">
-  <!-- PAGE 1 -->
-  <section class="page" id="page1">
-    <header class="brand-head">
-      <img src="logo.png" alt="Cooltek" class="logo">
-      <div class="title"><span>Heating</span> Service Report</div>
-      <div class="stripes" aria-hidden="true"><i></i><i></i><i></i></div>
-    </header>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "HVACBusiness", "name": "Cooltek Ltd", "telephone": "01623 431028", "email": "info@coolteklimited.com", "areaServed": ["Nottinghamshire", "Mansfield", "Mansfield Woodhouse", "Sutton-in-Ashfield", "Kirkby-in-Ashfield", "Nottingham", "Newark", "Southwell", "Ollerton", "Worksop", "Hucknall", "Shirebrook", "Chesterfield"], "description": "Air conditioning and heat pump installation, servicing and repairs across Nottinghamshire."}</script>
+<section class="hero"><div class="stripes" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="wrap">
+    <h1>Air conditioning and heat pumps across Nottinghamshire</h1>
+    <p class="lead">We design, fit and look after Mitsubishi Electric systems for homes and businesses. Over 35 years in the trade, MCS accredited, and on the end of the phone when something stops working.</p>
+    <div class="actions"><a class="btn btn-red" href="contact.html">Ask for a quote</a><a class="btn btn-line" href="tel:+441623431028">Call 01623 431028</a></div>
+    <ul class="hero-facts"><li>Mitsubishi Electric approved installer</li><li>MCS accredited</li><li>35+ years' experience</li><li>Homes and businesses</li></ul>
+  </div>
+</section>
 
-    <div class="details">
-      <div class="col" id="details-left"></div>
-      <div class="col" id="details-right"></div>
-    </div>
-
-    <div class="two-col">
-      <div class="block">
-        <h2>Outdoor unit detail</h2>
-        <div id="outdoor"></div>
-      </div>
-      <div class="block">
-        <h2>Indoor unit detail</h2>
-        <div id="indoor"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- PAGE 2 -->
-  <section class="page" id="page2">
-    <div class="two-col top">
-      <div>
-        <div class="block">
-          <h2>Electrical checks</h2>
-          <div id="electrical"></div>
-        </div>
-        <div class="block">
-          <h2>Unvented cylinder checks</h2>
-          <div id="unvented"></div>
-        </div>
-      </div>
-      <div>
-        <div class="block">
-          <h2>Heating system checks</h2>
-          <div id="heating"></div>
-        </div>
-        <div class="block">
-          <h2>Visit timings</h2>
-          <div id="timings"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="two-col notes">
-      <div class="note">
-        <label for="f-workDone">Details of visit / work carried out</label>
-        <textarea id="f-workDone" data-key="workDone" rows="5"></textarea>
-        <div class="print-text" data-mirror="workDone"></div>
-      </div>
-      <div class="note">
-        <label for="f-conclusion">Conclusion / recommendations</label>
-        <textarea id="f-conclusion" data-key="conclusion" rows="5"></textarea>
-        <div class="print-text" data-mirror="conclusion"></div>
-      </div>
-    </div>
-
-    <div class="two-col sigs">
-      <div class="sig">
-        <div class="sig-head"><label>Engineer signature</label><button type="button" class="link no-print" data-clear-sig="sigEngineer">Clear</button></div>
-        <canvas data-sig="sigEngineer"></canvas>
-      </div>
-      <div class="sig">
-        <div class="sig-head"><label>Customer signature</label><button type="button" class="link no-print" data-clear-sig="sigCustomer">Clear</button></div>
-        <canvas data-sig="sigCustomer"></canvas>
-      </div>
-    </div>
-
-    <footer class="brand-foot">
-      <div class="stripes" aria-hidden="true"><i></i><i></i><i></i></div>
-      <img src="logo.png" alt="Cooltek" class="logo">
-      <div class="contact" id="footContact"></div>
-    </footer>
-  </section>
-
-  <!-- Photos (on screen only; the PDF gets its own photo pages) -->
-  <section class="page photos-page no-print" id="photosEditor">
-    <div class="block">
-      <h2>Site visit images</h2>
-      <p class="hint">Photos go on extra pages at the end of the PDF, 6 per page. Add a caption under each one if you like.</p>
-      <div class="photo-grid" id="photoGrid"></div>
-      <label class="add-photos">
-        <input type="file" accept="image/*" multiple id="photoInput" hidden>
-        <span>+ Add site photos</span>
-      </label>
-    </div>
-  </section>
-</div>
-
-<nav class="toolbar no-print">
-  <button type="button" class="btn" id="btnJobs">☰ Jobs</button>
-  <button type="button" class="btn primary" id="btnPdf">Create PDF</button>
-  <button type="button" class="btn" id="btnNewVisit" title="Start next visit for this site">Next visit</button>
-  <span class="saved" id="savedNote"></span>
-</nav>
-
-<!-- Jobs panel -->
-<div class="overlay no-print" id="jobsPanel" hidden>
-  <div class="panel">
-    <div class="panel-head">
-      <h3>Jobs</h3>
-      <button type="button" class="x" data-close aria-label="Close">×</button>
-    </div>
-    <input type="search" id="jobSearch" placeholder="Search customer, address, job ref, serial…" autocomplete="off">
-    <button type="button" class="btn-blank" id="btnBlank">+ New blank report</button>
-    <div class="job-list" id="jobList"></div>
+<div class="wrap">
+  <div class="paths">
+    <a class="path theme-cool" href="air-conditioning.html"><svg viewBox="0 0 120 80" aria-hidden="true"><rect class="ill-line" x="6" y="8" width="108" height="34" rx="8"/>
+<path class="ill-line" d="M18 34h84M18 28h84"/><path class="ill-line" d="M30 52c-4 6-4 12 0 18M60 52c-4 6-4 12 0 18M90 52c-4 6-4 12 0 18"/></svg>
+      <h2>Air conditioning</h2>
+      <p>Cool rooms in summer and efficient heat in winter. Wall units, cassettes and multi-room systems for bedrooms, home offices, shops and workplaces.</p>
+      <span class="more">Air conditioning</span></a>
+    <a class="path theme-warm" href="heat-pumps.html"><svg viewBox="0 0 120 80" aria-hidden="true"><rect class="ill-line" x="6" y="6" width="108" height="64" rx="5"/>
+<circle class="ill-line" cx="46" cy="38" r="22"/><path class="ill-line" d="M46 16v44M24 38h44M30.5 22.5l31 31M61.5 22.5l-31 31"/>
+<path class="ill-line" d="M84 20h20M84 30h20M84 40h20M84 50h20"/><path class="ill-line" d="M16 70v6M104 70v6"/></svg>
+      <h2>Heat pumps</h2>
+      <p>Replace a gas, oil or LPG boiler with a Mitsubishi Electric Ecodan air source heat pump, with up to £7,500 off through the government grant.</p>
+      <span class="more">Heat pumps</span></a>
   </div>
 </div>
 
-<!-- PDF ready sheet -->
-<div class="overlay no-print" id="pdfSheet" hidden>
-  <div class="panel small">
-    <div class="panel-head">
-      <h3>PDF ready</h3>
-      <button type="button" class="x" data-close aria-label="Close">×</button>
+<section class="section">
+  <div class="wrap split">
+    <div>
+      <h2>Fitted by people who'll still answer the phone next year</h2>
+      <p class="lead">A heat pump or air con system is only as good as the design and install behind it. We size every system for the building, fit it to the manufacturer's standards and keep it running with yearly servicing.</p>
+      <p>When something goes wrong, you speak to the people who fitted it, not a call centre.</p>
     </div>
-    <p class="pdf-name" id="pdfName"></p>
-    <div class="sheet-actions">
-      <button type="button" class="btn primary big" id="btnShare">Share / send</button>
-      <button type="button" class="btn dark big" id="btnDownload">Download</button>
+    <ul class="creds">
+      <li><b>Approved</b><span>Mitsubishi Electric approved installer for Nottinghamshire.</span></li>
+      <li><b>Accredited</b><span>MCS accredited, so your heat pump qualifies for the Boiler Upgrade Scheme grant.</span></li>
+      <li><b>Experienced</b><span>Over 35 years installing and maintaining heating and cooling systems.</span></li>
+      <li><b>Local</b><span>Based in Mansfield, covering Nottinghamshire and the surrounding area.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="section navy">
+  <div class="wrap grant">
+    <div class="grant-figs">
+      <div class="fig theme-warm"><strong>£7,500</strong><span>off an air source heat pump</span></div>
+      <div class="fig theme-cool"><strong>£2,500</strong><span>off an air-to-air system</span></div>
+    </div>
+    <div>
+      <h2>Government grants towards your new system</h2>
+      <p class="lead">The Boiler Upgrade Scheme takes money off the cost of replacing fossil fuel heating. Homes heated by oil or LPG with no mains gas can get £9,000 towards a heat pump until March 2027.</p>
+      <p>The grant is claimed by your MCS installer, so we apply for it and take it straight off your quote.</p>
+      <p class="small">Figures from the government's Boiler Upgrade Scheme for England and Wales, checked November 2026. Eligibility rules apply. We'll confirm what your property qualifies for at the survey.</p>
+      <div class="actions"><a class="btn btn-red" href="contact.html?service=Heat%20pump">Check if you qualify</a></div>
     </div>
   </div>
-</div>
+</section>
 
-<div class="toast no-print" id="toast" hidden></div>
+<section class="section">
+  <div class="wrap">
+    <h2>How an install works</h2>
+    <ol class="steps">
+      <li><h3>Survey</h3><p>We visit, look at the building and talk through what you want it to do.</p></li>
+      <li><h3>Design and quote</h3><p>We size the system properly and give you a clear, written quote.</p></li>
+      <li><h3>Installation</h3><p>We fit and commission it, then show you how to use it.</p></li>
+      <li><h3>Aftercare</h3><p>Yearly servicing keeps it efficient, and we're a call away if anything goes wrong.</p></li>
+    </ol>
+  </div>
+</section>
 
-<script src="app.js"></script>
+<section class="section mist">
+  <div class="wrap split">
+    <div>
+      <h2>Already have a system?</h2>
+      <p class="lead">We service, repair and clean heat pumps and air conditioning, with emergency call-outs when you need them.</p>
+      <p>Every heat pump service comes with a full written report covering the checks, readings and any recommendations.</p>
+      <div class="actions"><a class="btn btn-navy" href="servicing.html">Servicing &amp; repairs</a></div>
+    </div>
+    <div>
+      <h3>Areas we cover</h3>
+      <ul class="areas"><li>Mansfield</li><li>Mansfield Woodhouse</li><li>Sutton-in-Ashfield</li><li>Kirkby-in-Ashfield</li><li>Nottingham</li><li>Newark</li><li>Southwell</li><li>Ollerton</li><li>Worksop</li><li>Hucknall</li><li>Shirebrook</li><li>Chesterfield</li></ul>
+      <p class="small" style="margin-top:14px">Not on the list? Call us, we probably cover you.</p>
+    </div>
+  </div>
+</section>
+<section class="callband"><div class="wrap">
+  <h2>Need a quote, a service or a repair?</h2>
+  <a class="phone" href="tel:+441623431028">01623 431028</a>
+</div></section></main>
+<footer class="site-foot">
+  <div class="foot-stripes" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <a class="brand" href="index.html"><img src="assets/logo.png" alt="Cooltek" width="140" height="28"></a>
+        <p>Air conditioning and heat pump installation, servicing and repairs across Nottinghamshire.</p>
+      </div>
+      <div><h3>Services</h3><ul>
+        <li><a href="air-conditioning.html">Air conditioning</a></li>
+        <li><a href="heat-pumps.html">Heat pumps</a></li>
+        <li><a href="servicing.html">Servicing &amp; repairs</a></li>
+        <li><a href="heat-pumps.html#grant">Heat pump grants</a></li></ul></div>
+      <div><h3>Areas</h3><ul><li>Mansfield</li><li>Mansfield Woodhouse</li><li>Sutton-in-Ashfield</li><li>Kirkby-in-Ashfield</li><li>Nottingham</li><li>Newark</li><li><a href="contact.html#areas">All areas</a></li></ul></div>
+      <div><h3>Contact</h3><ul>
+        <li><a href="tel:+441623431028">01623 431028</a></li>
+        <li><a href="mailto:info@coolteklimited.com">info@coolteklimited.com</a></li>
+        <li><a href="contact.html">Send an enquiry</a></li></ul></div>
+    </div>
+    <div class="legal"><span>© <span data-year>2026</span> Cooltek Ltd</span><span>Mitsubishi Electric approved installer &nbsp;|&nbsp; MCS accredited</span></div>
+  </div>
+</footer>
+<script src="assets/site.js"></script>
 </body>
 </html>
