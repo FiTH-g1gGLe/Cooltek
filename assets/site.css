@@ -218,3 +218,99 @@ p{margin:0 0 1em;max-width:66ch}
   .site-foot .cols{grid-template-columns:1fr}
   .page-head .stripes{opacity:.4}
 }
+
+/* ===== icons ===== */
+.ico{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.hero-facts .ico{width:20px;height:20px;color:var(--cyan)}
+.hero-facts li::before{display:none}
+.tile-ico{display:inline-grid;place-items:center;width:52px;height:52px;border-radius:12px;background:color-mix(in srgb,var(--accent) 12%,#fff);color:var(--accent);margin-bottom:14px}
+.tile-ico .ico{width:28px;height:28px}
+.tiles{list-style:none;padding:0;margin:32px 0 0;display:grid;gap:28px 32px}
+.tiles.two{grid-template-columns:1fr 1fr;margin-top:0}
+.tiles.three{grid-template-columns:repeat(3,1fr)}
+.tiles.four{grid-template-columns:repeat(4,1fr);margin-top:0}
+.tiles li{display:block}
+.tiles h3{font-size:1.12rem;margin-bottom:.3em}
+.tiles p{color:var(--muted);font-size:.97rem;margin:0}
+.section.mist .tile-ico{background:#fff}
+.tiles li:nth-child(odd) .tile-ico{--accent:var(--blue)}
+.tiles li:nth-child(even) .tile-ico{--accent:var(--red)}
+.theme-cool .tiles li .tile-ico{--accent:var(--blue)}
+.theme-warm .tiles li .tile-ico{--accent:var(--red)}
+.step-ico{width:30px;height:30px;color:var(--navy);float:right;margin-top:-50px}
+.contact-side p .ico{width:20px;height:20px;vertical-align:-4px;margin-right:6px;color:var(--cyan)}
+
+/* page head art */
+.head-grid{display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center}
+.head-art svg{width:220px;height:auto;color:#fff}
+.head-art .ill-line{stroke-width:2.4}
+.theme-cool .head-art svg{color:var(--cyan)}
+.theme-warm .head-art svg{color:#ff8a92}
+.head-ico{width:150px;height:150px;fill:none;stroke:var(--cyan);stroke-width:1.2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ===== hero house ===== */
+.hero-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:40px;align-items:center}
+.hero .stripes{opacity:.35}
+.house-wrap{margin:0;position:relative}
+.house{width:100%;height:auto;display:block;overflow:visible}
+.house *{vector-effect:non-scaling-stroke}
+.house .ground{stroke:#4a50a8;stroke-width:2}
+.house .roof{fill:none;stroke:#fff;stroke-width:3;stroke-linejoin:round}
+.house .wall{fill:#232870;stroke:#fff;stroke-width:3}
+.house .line{stroke:#5a60b8;stroke-width:2}
+.house .line.thin{stroke-width:1.5}
+.house .win{fill:#1b1f5e;stroke:#8f95d6;stroke-width:2}
+.house .ac rect{fill:#fff}
+.house .ac path{stroke:#9aa0d6;stroke-width:2}
+.house .rad rect{fill:none;stroke:#fff;stroke-width:2.5}
+.house .rad path{stroke:#fff;stroke-width:1.5}
+.house .cyl rect{fill:none;stroke:#fff;stroke-width:2.5}
+.house .cyl path{stroke:#8f95d6;stroke-width:1.5}
+.house .odu rect{fill:#e9ecf8;stroke:#fff;stroke-width:2}
+.house .odu circle{fill:#d3d8ee;stroke:#1b1f5e;stroke-width:2}
+.house .odu path{stroke:#1b1f5e;stroke-width:2;stroke-linecap:round}
+.house .fan{transform-origin:458px 359px;transform-box:view-box}
+.house .pipe{fill:none;stroke:#8f95d6;stroke-width:5;stroke-linejoin:round}
+.house .pipe-flow{fill:none;stroke:var(--flow);stroke-width:2.5;stroke-dasharray:8 12;stroke-linejoin:round}
+.house .flow{fill:none;stroke:var(--flow);stroke-width:3.5;stroke-linecap:round;stroke-dasharray:10 9}
+.house .heat path{fill:none;stroke:#ff6b75;stroke-width:3;stroke-linecap:round;opacity:0;transition:opacity .5s}
+.house .sun{fill:#ffd65a}
+.house .sunray{stroke:#ffd65a;stroke-width:3;stroke-linecap:round}
+.house .flake{stroke:#fff;stroke-width:2.5;stroke-linecap:round}
+.house .sky-summer,.house .sky-winter{transition:opacity .5s}
+.house-wrap[data-season=summer]{--flow:var(--cyan)}
+.house-wrap[data-season=winter]{--flow:#ff6b75}
+.house-wrap[data-season=summer] .sky-winter{opacity:0}
+.house-wrap[data-season=winter] .sky-summer{opacity:0}
+.house-wrap[data-season=winter] .heat path{opacity:1}
+.house-wrap figcaption{margin-top:14px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.season-btns{display:inline-flex;background:#141850;border-radius:999px;padding:4px}
+.season-btns button{background:none;border:0;color:#c9cdf0;font:inherit;font-weight:700;font-size:.92rem;padding:8px 16px;border-radius:999px;cursor:pointer}
+.season-btns button[aria-pressed=true]{background:#fff;color:var(--navy)}
+.house-wrap figcaption p{margin:0;flex:1;min-width:220px;font-size:.92rem;color:#c9cdf0}
+.house-wrap[data-season=summer] .cap-winter,.house-wrap[data-season=winter] .cap-summer{display:none}
+@media (prefers-reduced-motion:no-preference){
+  .house .fan{animation:spin 1.6s linear infinite}
+  .house .flow{animation:dash 1.1s linear infinite}
+  .house .pipe-flow{animation:dash 1.4s linear infinite}
+  .house-wrap[data-season=winter] .pipe-flow{animation-direction:reverse}
+  .house .heat path{animation:rise 2s ease-in-out infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes dash{to{stroke-dashoffset:-38}}
+  @keyframes rise{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+}
+
+@media (max-width:900px){
+  .hero-grid{grid-template-columns:1fr}
+  .house-wrap{max-width:520px}
+  .tiles.three{grid-template-columns:1fr 1fr}
+  .tiles.four{grid-template-columns:1fr 1fr}
+  .head-grid{grid-template-columns:1fr}
+  .head-art{display:none}
+}
+@media (max-width:600px){
+  .tiles.two,.tiles.three,.tiles.four{grid-template-columns:1fr}
+  .tiles li{display:grid;grid-template-columns:52px 1fr;gap:16px;align-items:start}
+  .tiles li .tile-ico{margin:0}
+  .step-ico{margin-top:-46px}
+}

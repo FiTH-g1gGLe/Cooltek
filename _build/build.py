@@ -24,6 +24,72 @@ SVG_HP = """<svg viewBox="0 0 120 80" aria-hidden="true"><rect class="ill-line" 
 <circle class="ill-line" cx="46" cy="38" r="22"/><path class="ill-line" d="M46 16v44M24 38h44M30.5 22.5l31 31M61.5 22.5l-31 31"/>
 <path class="ill-line" d="M84 20h20M84 30h20M84 40h20M84 50h20"/><path class="ill-line" d="M16 70v6M104 70v6"/></svg>"""
 
+
+# ---- icons (24px line icons) ----
+_I = {
+ "snow":'<path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7"/><path d="M9.5 3.5L12 6l2.5-2.5M9.5 20.5L12 18l2.5 2.5"/>',
+ "flame":'<path d="M12 3c1 3 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3.5 2-4.5 0 2 1 3 2 3 0-3-1-5 1-8.5z"/>',
+ "wrench":'<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.5-.6-.6-2.5z"/>',
+ "shield":'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>',
+ "award":'<circle cx="12" cy="9" r="6"/><path d="M8.5 14l-1.5 7 5-3 5 3-1.5-7"/>',
+ "clock":'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ "pin":'<path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/>',
+ "phone":'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
+ "mail":'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
+ "home":'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
+ "building":'<rect x="4" y="3" width="16" height="18" rx="1"/><path d="M8 7h2M14 7h2M8 11h2M14 11h2M8 15h2M14 15h2"/>',
+ "pound":'<path d="M16 6.5A4 4 0 0 0 9 9v3.5c0 3-1 5.5-3 7.5h12M6 13h8"/>',
+ "clipboard":'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 3h6v3H9zM9 11h6M9 15h4"/>',
+ "ruler":'<path d="M3 17L17 3l4 4L7 21H3z"/><path d="M13 7l1.5 1.5M10 10l1.5 1.5M7 13l1.5 1.5"/>',
+ "tools":'<path d="M3 21l7.5-7.5"/><path d="M13 4l7 7-3 3-7-7z"/><path d="M8 9l7 7"/>',
+ "calendar":'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M8 15l2 2 4-4"/>',
+ "filter":'<path d="M3 5h18l-7 8v6l-4 2v-8z"/>',
+ "bolt":'<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+ "drop":'<path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/>',
+ "thermo":'<path d="M10 14V5a2 2 0 0 1 4 0v9a4 4 0 1 1-4 0z"/><path d="M12 11v6"/>',
+ "sparkle":'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 17l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/>',
+ "wifi":'<path d="M2 9a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r=".6"/>',
+ "leaf":'<path d="M5 19c0-9 6-14 15-14 0 9-5 15-14 15"/><path d="M5 19l7-7"/>',
+ "quiet":'<path d="M4 10v4h4l5 4V6L8 10z"/><path d="M17 9.5a3.5 3.5 0 0 1 0 5"/>',
+ "radiator":'<rect x="3" y="7" width="18" height="11" rx="1.5"/><path d="M7 7v11M11 7v11M15 7v11M5 18v2M19 18v2"/>',
+ "report":'<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h7M9 16h5"/>',
+}
+def ico(name, cls="ico"):
+    return f'<svg class="{cls}" viewBox="0 0 24 24" aria-hidden="true">{_I[name]}</svg>'
+
+def tiles(items, cls="tiles"):
+    return f'<ul class="{cls}">' + "".join(f'<li><span class="tile-ico">{ico(i)}</span><div><h3>{t}</h3><p>{d}</p></div></li>' for i, t, d in items) + "</ul>"
+
+HOUSE = """<figure class="house-wrap" data-season="summer">
+<svg class="house" viewBox="0 0 560 430" role="img" aria-label="A house with an air conditioning unit, a radiator, a hot water cylinder and an outdoor heat pump">
+  <g class="sky-summer"><circle cx="480" cy="70" r="24" class="sun"/><path class="sunray" d="M480 30v-12M480 122v12M440 70h-12M532 70h-12M452 42l-8-8M508 98l8 8M508 42l8-8M452 98l-8 8"/></g>
+  <g class="sky-winter"><path class="flake" d="M450 40v24M439.6 46l20.8 12M439.6 58l20.8-12"/><path class="flake" d="M510 80v18M502 84.5l16 9M502 93.5l16-9"/><path class="flake" d="M470 110v14M464 113.5l12 7M464 120.5l12-7"/></g>
+  <path class="ground" d="M0 400h560"/>
+  <path class="roof" d="M36 178L220 58l184 120"/>
+  <rect class="wall" x="60" y="170" width="320" height="230"/>
+  <path class="line" d="M60 285h320"/>
+  <rect class="win" x="268" y="196" width="76" height="58" rx="2"/><path class="line thin" d="M306 196v58M268 225h76"/>
+  <g class="ac"><rect x="100" y="196" width="124" height="32" rx="7"/><path d="M112 220h100"/></g>
+  <g class="flows"><path class="flow" d="M122 236c-8 16 8 30 0 48"/><path class="flow" d="M162 236c-8 16 8 30 0 48"/><path class="flow" d="M202 236c-8 16 8 30 0 48"/></g>
+  <g class="rad"><rect x="96" y="334" width="104" height="42" rx="4"/><path d="M116 334v42M136 334v42M156 334v42M176 334v42"/></g>
+  <g class="heat"><path d="M116 324c-6-10 6-16 0-26M148 324c-6-10 6-16 0-26M180 324c-6-10 6-16 0-26"/></g>
+  <g class="cyl"><rect x="286" y="304" width="54" height="86" rx="24"/><path d="M296 330h34M296 360h34"/></g>
+  <path class="pipe" d="M412 352H340M412 336h-18V212H224"/>
+  <path class="pipe-flow" d="M412 352H340M412 336h-18V212H224"/>
+  <g class="odu"><rect x="412" y="318" width="124" height="82" rx="6"/><circle cx="458" cy="359" r="28"/>
+    <g class="fan"><path d="M458 331v56M430 359h56M438 339l40 40M478 339l-40 40"/></g>
+    <path d="M500 336h24M500 348h24M500 360h24M500 372h24M500 384h24"/></g>
+</svg>
+<figcaption>
+  <div class="season-btns" role="group" aria-label="Season">
+    <button type="button" data-set="summer" aria-pressed="true">Summer</button>
+    <button type="button" data-set="winter" aria-pressed="false">Winter</button>
+  </div>
+  <p class="cap-summer">Summer: the indoor unit takes heat out of the room and the outdoor unit gets rid of it.</p>
+  <p class="cap-winter">Winter: the outdoor unit draws warmth from the cold air and pumps it into your radiators, rooms and hot water.</p>
+</figcaption>
+</figure>"""
+
 def stripes(n=3):
     return '<div class="stripes" aria-hidden="true">' + "<i></i>" * n + "</div>"
 
@@ -97,11 +163,12 @@ def foot():
 </html>
 """
 
-def page_head(h1, lead, ctas=True, service=""):
+def page_head(h1, lead, ctas=True, service="", art=""):
     q = f"contact.html?service={service}" if service else "contact.html"
     btns = f"""<div class="actions"><a class="btn btn-red" href="{q}">Ask for a quote</a>
 <a class="btn btn-line" href="tel:{BIZ['tel']}">Call {BIZ['phone']}</a></div>""" if ctas else ""
-    return f"""<section class="page-head">{stripes()}<div class="wrap"><h1>{h1}</h1><p class="lead">{lead}</p>{btns}</div></section>"""
+    art_html = f'<div class="head-art">{art}</div>' if art else ""
+    return f"""<section class="page-head">{stripes()}<div class="wrap head-grid"><div><h1>{h1}</h1><p class="lead">{lead}</p>{btns}</div>{art_html}</div></section>"""
 
 def faq(items):
     return '<div class="faq">' + "".join(f"<details><summary>{q}</summary><p>{a}</p></details>" for q, a in items) + "</div>"
@@ -121,12 +188,12 @@ home = head("Cooltek | Air conditioning & heat pumps in Nottinghamshire",
             "index.html") + f"""
 <script type="application/ld+json">{json.dumps(schema)}</script>
 <section class="hero">{stripes()}
-  <div class="wrap">
+  <div class="wrap hero-grid"><div>
     <h1>Air conditioning and heat pumps across Nottinghamshire</h1>
     <p class="lead">We design, fit and look after Mitsubishi Electric systems for homes and businesses. Over 35 years in the trade, MCS accredited, and on the end of the phone when something stops working.</p>
     <div class="actions"><a class="btn btn-red" href="contact.html">Ask for a quote</a><a class="btn btn-line" href="tel:{BIZ['tel']}">Call {BIZ['phone']}</a></div>
-    <ul class="hero-facts"><li>Mitsubishi Electric approved installer</li><li>MCS accredited</li><li>35+ years' experience</li><li>Homes and businesses</li></ul>
-  </div>
+    <ul class="hero-facts"><li>{ico("award")}Mitsubishi Electric approved installer</li><li>{ico("shield")}MCS accredited</li><li>{ico("clock")}35+ years' experience</li><li>{ico("home")}Homes and businesses</li></ul>
+  </div>{HOUSE}</div>
 </section>
 
 <div class="wrap">
@@ -149,12 +216,22 @@ home = head("Cooltek | Air conditioning & heat pumps in Nottinghamshire",
       <p class="lead">A heat pump or air con system is only as good as the design and install behind it. We size every system for the building, fit it to the manufacturer's standards and keep it running with yearly servicing.</p>
       <p>When something goes wrong, you speak to the people who fitted it, not a call centre.</p>
     </div>
-    <ul class="creds">
-      <li><b>Approved</b><span>Mitsubishi Electric approved installer for Nottinghamshire.</span></li>
-      <li><b>Accredited</b><span>MCS accredited, so your heat pump qualifies for the Boiler Upgrade Scheme grant.</span></li>
-      <li><b>Experienced</b><span>Over 35 years installing and maintaining heating and cooling systems.</span></li>
-      <li><b>Local</b><span>Based in Mansfield, covering Nottinghamshire and the surrounding area.</span></li>
-    </ul>
+    {tiles([("award","Approved","Mitsubishi Electric approved installer for Nottinghamshire."),
+            ("shield","Accredited","MCS accredited, so your heat pump qualifies for the government grant."),
+            ("clock","Experienced","Over 35 years installing and maintaining heating and cooling."),
+            ("pin","Local","Based in Mansfield, covering Nottinghamshire and nearby.")], "tiles two")}
+  </div>
+</section>
+
+<section class="section mist">
+  <div class="wrap">
+    <h2>What we do</h2>
+    {tiles([("tools","Installation","New air conditioning and heat pump systems, designed for the building."),
+            ("calendar","Servicing","Yearly servicing with a written report, to keep systems efficient and warranties valid."),
+            ("wrench","Repairs and breakdowns","Rapid response repairs and emergency call-outs."),
+            ("sparkle","Cleaning","Deep cleans for air conditioning units, filters and coils."),
+            ("building","Commercial","Offices, shops, restaurants and server rooms."),
+            ("pound","Grants","We claim the Boiler Upgrade Scheme grant for you and take it off your quote.")], "tiles three")}
   </div>
 </section>
 
@@ -178,10 +255,10 @@ home = head("Cooltek | Air conditioning & heat pumps in Nottinghamshire",
   <div class="wrap">
     <h2>How an install works</h2>
     <ol class="steps">
-      <li><h3>Survey</h3><p>We visit, look at the building and talk through what you want it to do.</p></li>
-      <li><h3>Design and quote</h3><p>We size the system properly and give you a clear, written quote.</p></li>
-      <li><h3>Installation</h3><p>We fit and commission it, then show you how to use it.</p></li>
-      <li><h3>Aftercare</h3><p>Yearly servicing keeps it efficient, and we're a call away if anything goes wrong.</p></li>
+      <li>{ico("clipboard","ico step-ico")}<h3>Survey</h3><p>We visit, look at the building and talk through what you want it to do.</p></li>
+      <li>{ico("ruler","ico step-ico")}<h3>Design and quote</h3><p>We size the system properly and give you a clear, written quote.</p></li>
+      <li>{ico("tools","ico step-ico")}<h3>Installation</h3><p>We fit and commission it, then show you how to use it.</p></li>
+      <li>{ico("calendar","ico step-ico")}<h3>Aftercare</h3><p>Yearly servicing keeps it efficient, and we're a call away if anything goes wrong.</p></li>
     </ol>
   </div>
 </section>
@@ -209,7 +286,7 @@ ac = head("Air conditioning installation in Nottinghamshire | Cooltek",
           "air-conditioning.html", "theme-cool") + page_head(
     "Air conditioning for homes and businesses",
     "Quiet, efficient Mitsubishi Electric systems that keep rooms cool in summer and heat them in winter.",
-    service="Air%20conditioning") + f"""
+    service="Air%20conditioning", art=SVG_AC) + f"""
 <section class="section">
   <div class="wrap split">
     <div>
@@ -224,6 +301,14 @@ ac = head("Air conditioning installation in Nottinghamshire | Cooltek",
   </div>
 </section>
 <section class="section mist">
+  <div class="wrap">
+    {tiles([("snow","Cools and heats","One system for hot summers and cold winters."),
+            ("quiet","Quiet","Indoor units are designed to run quietly in bedrooms and offices."),
+            ("wifi","App control","Set temperatures and schedules from your phone."),
+            ("leaf","Efficient","Heat pump technology uses far less energy than plug-in heaters.")], "tiles four")}
+  </div>
+</section>
+<section class="section">
   <div class="wrap split">
     <div><h2>At home</h2>{ticks(["Bedrooms and loft conversions", "Home offices", "Conservatories and garden rooms", "Living spaces and extensions"])}</div>
     <div><h2>At work</h2>{ticks(["Offices and meeting rooms", "Shops and salons", "Restaurants and takeaways", "Workshops and server rooms"])}</div>
@@ -248,7 +333,7 @@ hp = head("Air source heat pump installer in Nottinghamshire | Cooltek",
           "heat-pumps.html", "theme-warm") + page_head(
     "Air source heat pumps, designed and fitted properly",
     "Swap your gas, oil or LPG boiler for a Mitsubishi Electric Ecodan heat pump, fitted by an MCS accredited installer.",
-    service="Heat%20pump") + f"""
+    service="Heat%20pump", art=SVG_HP) + f"""
 <section class="section">
   <div class="wrap split">
     <div>
@@ -260,6 +345,14 @@ hp = head("Air source heat pump installer in Nottinghamshire | Cooltek",
       <h3>What's included</h3>
       {ticks(["Home survey and room-by-room heat loss calculation", "Mitsubishi Electric Ecodan outdoor unit", "Hot water cylinder and controls", "Radiator upgrades where needed", "Grant application handled for you", "Commissioning and a walkthrough of the controls"])}
     </div>
+  </div>
+</section>
+<section class="section mist">
+  <div class="wrap">
+    {tiles([("leaf","No gas or oil","No fuel deliveries, no flue and no combustion in the house."),
+            ("snow","Works in winter","Designed to keep heating well below freezing."),
+            ("drop","Hot water too","Heats your hot water cylinder as well as the radiators."),
+            ("pound","Grant funded","Up to £7,500 off, or £9,000 for oil and LPG homes.")], "tiles four")}
   </div>
 </section>
 <section class="section navy" id="grant">
@@ -280,10 +373,10 @@ hp = head("Air source heat pump installer in Nottinghamshire | Cooltek",
   <div class="wrap">
     <h2>From first visit to first warm day</h2>
     <ol class="steps">
-      <li><h3>Survey</h3><p>We measure up, check insulation and radiators, and work out the heat each room needs.</p></li>
-      <li><h3>Design and quote</h3><p>You get a written quote with the grant already taken off.</p></li>
-      <li><h3>Installation</h3><p>We fit the outdoor unit, cylinder and controls, then fill and commission the system.</p></li>
-      <li><h3>Aftercare</h3><p>A yearly service with a full written report keeps it running efficiently and protects your warranty.</p></li>
+      <li>{ico("clipboard","ico step-ico")}<h3>Survey</h3><p>We measure up, check insulation and radiators, and work out the heat each room needs.</p></li>
+      <li>{ico("ruler","ico step-ico")}<h3>Design and quote</h3><p>You get a written quote with the grant already taken off.</p></li>
+      <li>{ico("tools","ico step-ico")}<h3>Installation</h3><p>We fit the outdoor unit, cylinder and controls, then fill and commission the system.</p></li>
+      <li>{ico("calendar","ico step-ico")}<h3>Aftercare</h3><p>A yearly service with a full written report keeps it running efficiently and protects your warranty.</p></li>
     </ol>
   </div>
 </section>
@@ -307,15 +400,17 @@ sv = head("Heat pump & air conditioning servicing and repairs | Cooltek",
           "servicing.html") + page_head(
     "Servicing, repairs and breakdowns",
     "Yearly servicing keeps your system efficient and your warranty valid. If it stops working, call us and we'll get it running again.",
-    service="Servicing") + f"""
+    service="Servicing", art=ico("wrench","head-ico")) + f"""
 <section class="section">
   <div class="wrap split">
     <div class="theme-warm">
+      <span class="tile-ico">{ico("radiator")}</span>
       <h2>Heat pump service</h2>
       <p>Every heat pump service ends with a full written report you can keep, covering the checks, readings and anything we recommend.</p>
       {ticks(["Electrical connections and isolators", "Strainer and magnetic filter cleaned", "Antifreeze protection tested", "Expansion vessels checked and charged", "Unvented cylinder safety checks", "Flow rates, settings and software", "Compressor hours and performance logged", "Pipework insulation checked"])}
     </div>
     <div class="theme-cool">
+      <span class="tile-ico">{ico("snow")}</span>
       <h2>Air conditioning service</h2>
       <p>A clean, well-maintained system cools faster, costs less to run and keeps the air in the room fresh.</p>
       {ticks(["Filters cleaned or replaced", "Indoor coil and fan cleaned", "Condensate drain checked and cleared", "Outdoor unit cleaned and inspected", "Electrical connections checked", "Heating and cooling performance tested"])}
@@ -325,12 +420,14 @@ sv = head("Heat pump & air conditioning servicing and repairs | Cooltek",
 <section class="section mist">
   <div class="wrap split">
     <div>
+      <span class="tile-ico">{ico("bolt")}</span>
       <h2>Breakdowns and repairs</h2>
       <p class="lead">Heating gone off, or air con blowing warm? Call us and tell us what it's doing.</p>
       <p>We offer emergency call-outs and rapid response repairs, with dedicated time slots so you're not waiting in all day.</p>
       <div class="actions"><a class="btn btn-red" href="tel:{BIZ['tel']}">Call {BIZ['phone']}</a><a class="btn btn-navy" href="contact.html?service=Repair">Report a fault</a></div>
     </div>
     <div>
+      <span class="tile-ico">{ico("report")}</span>
       <h2>Never miss a service</h2>
       <p>Your service report shows the date your next service is due. Get in touch a few weeks before and we'll book you in.</p>
       <div class="actions"><a class="btn btn-navy" href="contact.html?service=Servicing">Book a service</a></div>
@@ -360,9 +457,9 @@ ct = head("Contact Cooltek | Quotes, servicing and repairs",
       <div class="full"><button class="btn btn-red" type="submit">Send enquiry</button></div>
     </form>
     <aside class="contact-side">
-      <p>Call us</p>
+      <p>{ico("phone")} Call us</p>
       <a class="big" href="tel:{BIZ['tel']}">{BIZ['phone']}</a>
-      <p>Email</p>
+      <p>{ico("mail")} Email</p>
       <a class="big" style="font-size:1.15rem" href="mailto:{BIZ['email']}">{BIZ['email']}</a>
       {f"<p>Address</p><p style='color:#fff'>{BIZ['address']}</p>" if BIZ['address'] else ""}
       <p class="small" style="color:#9ea4d6;margin-top:1.5em">For breakdowns, please call rather than email so we can help you faster.</p>

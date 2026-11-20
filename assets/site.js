@@ -55,3 +55,18 @@ if (form) {
     }
   });
 }
+
+// hero summer / winter switch (auto-alternates until someone taps it)
+const house = document.querySelector(".house-wrap");
+if (house) {
+  const set = (s) => {
+    house.dataset.season = s;
+    house.querySelectorAll("[data-set]").forEach((b) => b.setAttribute("aria-pressed", b.dataset.set === s));
+  };
+  let auto = matchMedia("(prefers-reduced-motion: reduce)").matches ? null
+    : setInterval(() => set(house.dataset.season === "summer" ? "winter" : "summer"), 6000);
+  house.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-set]"); if (!b) return;
+    clearInterval(auto); auto = null; set(b.dataset.set);
+  });
+}
