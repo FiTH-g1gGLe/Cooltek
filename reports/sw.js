@@ -1,5 +1,5 @@
 // Lets the report work with no signal (e.g. rural sites). Bump VERSION after changing files.
-const VERSION = "cooltek-v3";
+const VERSION = "cooltek-v4";
 const FILES = ["./", "index.html", "style.css", "app.js", "logo.png", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png"];
 
 self.addEventListener("install", (e) => {
