@@ -19,6 +19,21 @@ Website and service report app for Cooltek Ltd: air conditioning and heat pumps,
 See the notes at the top of `reports/app.js`. Footer details are in its `BUSINESS` block.
 After changing report files, bump `VERSION` in `reports/sw.js` so installed copies update.
 
+## Sync between devices (Cloudflare)
+Reports save on the device first, then sync through `functions/api/[[path]].js` to a Cloudflare D1 database,
+so they appear on every phone and PC that has the access code. Most recent edit wins. Works offline and catches up later.
+
+One-off setup in Cloudflare:
+1. **Workers & Pages → Create → Pages → Connect to Git** → pick `FiTH-g1gGLe/Cooltek`. Framework: None. Build command: empty. Output directory: `/`. Deploy.
+2. **Storage & Databases → D1 → Create** a database called `cooltek`.
+3. In the Pages project: **Settings → Bindings → Add → D1 database**. Variable name `DB`, database `cooltek`.
+4. **Settings → Variables and Secrets → Add** → type *Secret*, name `SYNC_KEY`, value = a long access code.
+5. **Deployments → Retry deployment** (settings only apply to new deployments).
+6. Open `https://<project>.pages.dev/reports/`, tap **Sync off**, enter the access code. Repeat once per device.
+
+Tables are created automatically. Reports saved on the old GitHub Pages address can be sent across by opening the old
+address, tapping **Sync off**, and entering the code plus the server address `https://<project>.pages.dev/api`.
+
 ## Hosting
 GitHub Pages (Settings → Pages → main → / root). For a custom domain, add it under Settings → Pages → Custom domain,
 or move to Cloudflare Pages (no build command, output directory `/`).

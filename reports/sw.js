@@ -1,5 +1,5 @@
 // Lets the report work with no signal (e.g. rural sites). Bump VERSION after changing files.
-const VERSION = "cooltek-v4";
+const VERSION = "cooltek-v5";
 const FILES = ["./", "index.html", "style.css", "app.js", "logo.png", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png"];
 
 self.addEventListener("install", (e) => {
@@ -10,7 +10,7 @@ self.addEventListener("activate", (e) => {
 });
 // Network first (so updates appear straight away), cache when offline.
 self.addEventListener("fetch", (e) => {
-  if (e.request.method !== "GET") return;
+  if (e.request.method !== "GET" || new URL(e.request.url).pathname.startsWith("/api/")) return;
   e.respondWith(
     fetch(e.request).then((res) => {
       if (res.ok && new URL(e.request.url).origin === location.origin) {

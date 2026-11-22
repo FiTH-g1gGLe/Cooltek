@@ -271,17 +271,24 @@ function renderCompare() {
 }
 
 /* ---------- Saving ---------- */
-let saveTimer;
+const isBlank = (s) => Object.entries(s).every(([k, v]) =>
+  ["date", "nextService"].includes(k) || v === "" || v == null || (Array.isArray(v) && v.length === 0));
+let saveTimer, saveTimer_flag = false;
 function save(now) {
   clearTimeout(saveTimer);
+  saveTimer_flag = !now;
   const go = async () => {
+    saveTimer_flag = false;
     state = readForm();
     try {
       const old = currentId ? await DB.get(currentId) : null;
+      if (old && !old.deleted && JSON.stringify(old.data) === JSON.stringify(state)) { lsSet("cooltek-current", currentId); return; }
+      if (!old && isBlank(state)) return;            // don't store or sync an untouched blank report
       if (!currentId) currentId = newId();
-      await DB.put({ id: currentId, created: old ? old.created : Date.now(), updated: Date.now(), data: state });
+      await DB.put({ id: currentId, created: old ? old.created : Date.now(), updated: Date.now(), data: state, dirty: true });
       lsSet("cooltek-current", currentId);
       note("Saved ✓");
+      Sync.soon();
     } catch (e) { note("Couldn't save – storage full?"); }
   };
   return now ? go() : (saveTimer = setTimeout(go, 500));
@@ -290,6 +297,144 @@ let noteTimer;
 function note(t) { const el = $("#savedNote"); el.textContent = t; clearTimeout(noteTimer); noteTimer = setTimeout(() => (el.textContent = ""), 2000); }
 let toastTimer;
 function toast(t) { const el = $("#toast"); el.textContent = t; el.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => (el.hidden = true), 3200); }
+
+
+/* ---------- Sync between devices ----------
+   Every report is saved on the device first (works with no signal), then copied
+   to the Cooltek server so it appears on every phone and PC that has the access code.
+   If two devices edit the same report, the most recent edit wins. */
+const Sync = {
+  busy: false, timer: null, status: "off",
+  base() {
+    const custom = (lsGet("cooltek-sync-url") || "").trim().replace(/\/+$/, "");
+    if (custom) return custom;
+    if (location.hostname.endsWith("github.io") || location.protocol === "file:") return "";
+    return location.origin + "/api";
+  },
+  key: () => lsGet("cooltek-sync-key") || "",
+  enabled() { return !!(this.base() && this.key()); },
+  setStatus(s, detail) {
+    this.status = s;
+    const chip = $("#syncChip"); if (!chip) return;
+    const text = { off: "Sync off", ok: "Synced", busy: "Syncing…", offline: "Offline", error: "Sync problem", key: "Wrong code" }[s] || s;
+    chip.textContent = text; chip.dataset.state = s;
+    chip.title = detail || text;
+    const st = $("#syncStatus"); if (st) st.textContent = detail || text;
+  },
+  async api(path, opts = {}) {
+    const r = await fetch(this.base() + path, { ...opts, headers: { "Content-Type": "application/json", "X-Cooltek-Key": this.key(), ...(opts.headers || {}) } });
+    let body = null; try { body = await r.json(); } catch (_) {}
+    if (!r.ok) { const e = new Error((body && body.error) || "HTTP " + r.status); e.status = r.status; throw e; }
+    return body;
+  },
+  uploaded() { try { return new Set(JSON.parse(lsGet("cooltek-uploaded") || "[]")); } catch (_) { return new Set(); } },
+  markUploaded(set) { lsSet("cooltek-uploaded", JSON.stringify([...set].slice(-5000))); },
+  soon() { if (!this.enabled()) return; clearTimeout(this.timer); this.timer = setTimeout(() => this.run(), 2500); },
+
+  async push() {
+    const dirty = (await DB.all()).filter((j) => j.dirty);
+    const up = this.uploaded();
+    for (const j of dirty) {
+      let payload;
+      if (j.deleted) payload = { updated: j.updated, deleted: true };
+      else {
+        const photos = (j.data.photos || []).map((p) => (typeof p === "string" ? { src: p, caption: "" } : p));
+        for (const p of photos) {
+          if (!p.id) p.id = newId();
+          if (!up.has(p.id) && p.src) { await this.api("/photos/" + p.id, { method: "PUT", body: JSON.stringify({ job_id: j.id, data: p.src }) }); up.add(p.id); this.markUploaded(up); }
+        }
+        payload = { updated: j.updated, data: { ...j.data, photos: photos.map((p) => ({ id: p.id, caption: p.caption || "" })) } };
+      }
+      const res = await this.api("/jobs/" + j.id, { method: "PUT", body: JSON.stringify(payload) });
+      const now = await DB.get(j.id);
+      if (now && now.updated === j.updated) {           // not edited again while uploading
+        if (j.deleted) await DB.del(j.id);
+        else await DB.put({ ...now, dirty: false });
+      }
+      if (!res.accepted) await this.applyRemote(await this.api("/jobs/" + j.id));
+    }
+  },
+
+  async applyRemote(r) {
+    const local = await DB.get(r.id);
+    if (local && local.dirty && local.updated > r.updated) return;       // our newer edit will be pushed
+    if (local && !local.dirty && local.updated === r.updated && !r.deleted) return; // already have it
+    if (r.deleted) {
+      if (local) await DB.del(r.id);
+      if (r.id === currentId) { currentId = null; state = { date: today(), nextService: plusYear(today()) }; writeForm(state); toast("This report was deleted on another device"); }
+      return;
+    }
+    const localPhotos = new Map(((local && local.data && local.data.photos) || []).filter((p) => p && p.id).map((p) => [p.id, p.src]));
+    const up = this.uploaded();
+    const photos = [];
+    for (const p of r.data.photos || []) {
+      let src = localPhotos.get(p.id);
+      if (!src) { try { src = (await this.api("/photos/" + p.id)).data; } catch (_) { continue; } }
+      up.add(p.id); photos.push({ id: p.id, caption: p.caption || "", src });
+    }
+    this.markUploaded(up);
+    const data = { ...r.data, photos };
+    await DB.put({ id: r.id, created: local ? local.created : r.updated, updated: r.updated, data, dirty: false });
+    if (r.id === currentId && !saveTimer_pending()) { state = data; writeForm(state); }
+  },
+
+  async pull() {
+    let cursor = Number(lsGet("cooltek-cursor:" + this.base()) || 0), more = true;
+    while (more) {
+      const res = await this.api("/jobs?since=" + cursor);
+      for (const r of res.jobs) await this.applyRemote(r);
+      cursor = res.cursor; more = res.more;
+      lsSet("cooltek-cursor:" + this.base(), String(cursor));
+    }
+  },
+
+  async run() {
+    if (!this.enabled()) { this.setStatus("off", "Sync isn't set up on this device"); return; }
+    if (this.busy) { this.again = true; return; }
+    this.busy = true; this.setStatus("busy");
+    try {
+      if (saveTimer_pending()) await save(true);
+      await this.push();
+      await this.pull();
+      lsSet("cooltek-last-sync", String(Date.now()));
+      this.setStatus("ok", "Synced " + new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }));
+      if (!$("#jobsPanel").hidden) renderJobs();
+    } catch (e) {
+      if (e.status === 401) this.setStatus("key", "Wrong access code – check it in Sync settings");
+      else if (e.status) this.setStatus("error", e.message);
+      else this.setStatus("offline", "No connection – changes are saved on this device and will sync later");
+    } finally {
+      this.busy = false;
+      if (this.again) { this.again = false; this.soon(); }
+    }
+  },
+
+  init() {
+    const chip = $("#syncChip"), sheet = $("#syncSheet");
+    chip.addEventListener("click", () => {
+      $("#syncKey").value = this.key(); $("#syncUrl").value = lsGet("cooltek-sync-url") || "";
+      $("#syncUrlRow").hidden = !!this.base() && !lsGet("cooltek-sync-url");
+      sheet.hidden = false;
+    });
+    $("#btnSyncSave").addEventListener("click", async () => {
+      const key = $("#syncKey").value.trim(), url = $("#syncUrl").value.trim();
+      const changed = key !== this.key() || url !== (lsGet("cooltek-sync-url") || "");
+      lsSet("cooltek-sync-key", key); lsSet("cooltek-sync-url", url);
+      if (changed) {                       // first connection: send everything on this device
+        for (const j of await DB.all()) if (!j.dirty) await DB.put({ ...j, dirty: true });
+        lsSet("cooltek-cursor:" + this.base(), "0");
+      }
+      await this.run();
+      if (this.status === "ok") { sheet.hidden = true; toast("Sync is on – reports will appear on all your devices"); }
+    });
+    $("#btnSyncNow").addEventListener("click", () => this.run());
+    window.addEventListener("online", () => this.run());
+    document.addEventListener("visibilitychange", () => { if (!document.hidden) this.run(); });
+    setInterval(() => { if (!document.hidden) this.run(); }, 45000);
+    this.run();
+  },
+};
+const saveTimer_pending = () => saveTimer_flag;
 
 /* ---------- Tick boxes: tap again to untick ---------- */
 function setupRadios() {
@@ -352,7 +497,11 @@ function shrink(file) {
     img.onerror = rej; img.src = url;
   });
 }
-const photoList = () => (state.photos || []).map((p) => (typeof p === "string" ? { src: p, caption: "" } : p));
+const photoList = () => (state.photos || []).map((p) => {
+  const o = typeof p === "string" ? { src: p, caption: "" } : { ...p };
+  if (!o.id) o.id = newId();
+  return o;
+});
 function renderPhotos() {
   state.photos = photoList();
   $("#photoGrid").innerHTML = state.photos.map((p, i) =>
@@ -362,7 +511,7 @@ function renderPhotos() {
 function setupPhotos() {
   $("#photoInput").addEventListener("change", async (e) => {
     const files = [...e.target.files]; e.target.value = "";
-    for (const f of files) { try { state.photos = [...photoList(), { src: await shrink(f), caption: "" }]; } catch (_) {} }
+    for (const f of files) { try { state.photos = [...photoList(), { id: newId(), src: await shrink(f), caption: "" }]; } catch (_) {} }
     renderPhotos(); save(true);
   });
   $("#photoGrid").addEventListener("click", (e) => {
@@ -381,7 +530,7 @@ function plusYear(v) { if (!v) return ""; const [y, m, d] = v.split("-"); return
 
 async function openJob(id) {
   const job = await DB.get(id);
-  if (!job) return;
+  if (!job || job.deleted) return;
   currentId = id; state = job.data || {}; lsSet("cooltek-current", id);
   writeForm(state); window.scrollTo(0, 0);
 }
@@ -404,7 +553,7 @@ async function nextVisitFrom(data) {
 const jobTitle = (d) => d.customerName || (d.address || "").split(/[\n,]/)[0] || "Untitled report";
 async function renderJobs() {
   const q = $("#jobSearch").value.trim().toLowerCase();
-  let jobs = (await DB.all()).sort((a, b) => b.updated - a.updated);
+  let jobs = (await DB.all()).filter((j) => !j.deleted).sort((a, b) => b.updated - a.updated);
   if (q) jobs = jobs.filter((j) => {
     const d = j.data || {};
     return [d.customerName, d.customerPhone, d.address, d.jobRef, d.odSerial, d.cylSerial, d.w3w].join(" ").toLowerCase().includes(q);
@@ -413,7 +562,7 @@ async function renderJobs() {
     const d = j.data || {};
     const sub = [(d.address || "").replace(/\n/g, ", "), d.jobRef, fmtDate(d.date)].filter(Boolean).join(" · ");
     return `<div class="job${j.id === currentId ? " current" : ""}">
-      <div class="job-main" data-open="${j.id}"><b>${esc(jobTitle(d))}</b><span>${esc(sub || "No details yet")}</span></div>
+      <div class="job-main" data-open="${j.id}"><b>${esc(jobTitle(d))}</b><span>${esc(sub || "No details yet")}</span>${j.dirty && Sync.enabled() ? '<span class="unsynced">Not synced yet</span>' : ""}</div>
       <div class="job-actions"><button type="button" data-next="${j.id}" title="Start next visit for this site">Next visit</button>
       <button type="button" class="del" data-delete="${j.id}" aria-label="Delete">🗑</button></div></div>`;
   }).join("") : `<div class="empty-list">${q ? "No matching jobs" : "No saved jobs yet"}</div>`;
@@ -430,7 +579,8 @@ function setupJobs() {
     else if (d) {
       const j = await DB.get(d.dataset.delete);
       if (!confirm(`Delete "${jobTitle(j.data || {})}"? This can't be undone.`)) return;
-      await DB.del(d.dataset.delete);
+      await DB.put({ ...j, deleted: true, dirty: true, updated: Date.now(), data: null });
+      Sync.soon();
       if (d.dataset.delete === currentId) { currentId = null; state = { date: today(), nextService: plusYear(today()) }; writeForm(state); }
       renderJobs();
     }
@@ -579,13 +729,15 @@ async function start() {
   // bring over a report saved by the first version of the app
   const legacy = lsGet("cooltek-report-v1");
   if (legacy && !lsGet("cooltek-migrated")) {
-    try { const d = JSON.parse(legacy); if (d && Object.keys(d).length > 2) { const id = newId(); await DB.put({ id, created: Date.now(), updated: Date.now(), data: d }); lsSet("cooltek-current", id); } } catch (_) {}
+    try { const d = JSON.parse(legacy); if (d && Object.keys(d).length > 2) { const id = newId(); await DB.put({ id, created: Date.now(), updated: Date.now(), data: d, dirty: true }); lsSet("cooltek-current", id); } } catch (_) {}
     lsSet("cooltek-migrated", "1");
   }
   const cur = lsGet("cooltek-current");
-  const job = (cur && (await DB.get(cur))) || (await DB.all()).sort((a, b) => b.updated - a.updated)[0];
+  const curJob = cur && (await DB.get(cur));
+  const job = (curJob && !curJob.deleted && curJob) || (await DB.all()).filter((j) => !j.deleted).sort((a, b) => b.updated - a.updated)[0];
   if (job) await openJob(job.id);
   else { state = { date: today(), nextService: plusYear(today()) }; writeForm(state); }
+  Sync.init();
 }
 start();
 
