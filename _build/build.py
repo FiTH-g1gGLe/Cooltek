@@ -2,7 +2,7 @@
 Edit BIZ for contact details, AREAS for towns covered, and the page bodies below."""
 import json, pathlib
 
-ROOT = pathlib.Path(__file__).resolve().parent.parent
+ROOT = pathlib.Path(__file__).resolve().parent.parent / "public"
 BIZ = {
     "name": "Cooltek Ltd",
     "phone": "01623 431028",

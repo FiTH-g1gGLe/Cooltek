@@ -1,5 +1,5 @@
-/* Cooltek sync server – runs on Cloudflare Pages Functions with a D1 database.
-   Needs two settings in the Cloudflare Pages project:
+/* Cooltek sync server – runs inside the Cloudflare Worker (src/worker.js) with a D1 database.
+   Needs two settings on the Worker:
      DB        – D1 database binding
      SYNC_KEY  – the company access code (a secret). Every device enters it once.
    Tables are created automatically on first use. */
