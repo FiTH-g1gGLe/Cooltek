@@ -6,6 +6,12 @@
     "directory": "./public",
     "binding": "ASSETS",
     "not_found_handling": "404-page"
-  }
-  // D1 database binding gets added here once the database exists
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "cooltek",
+      "database_id": "a12b9177-7c14-4624-ba7c-aa3625406600"
+    }
+  ]
 }
