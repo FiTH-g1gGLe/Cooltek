@@ -8,7 +8,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../app/style.css">
 </head>
 <body>
 
@@ -16,7 +16,7 @@
   <!-- PAGE 1 -->
   <section class="page" id="page1">
     <header class="brand-head">
-      <img src="logo.png" alt="Cooltek" class="logo">
+      <img src="../app/logo.png" alt="Cooltek" class="logo">
       <div class="title"><span>Heating</span> Service Report</div>
       <div class="stripes" aria-hidden="true"><i></i><i></i><i></i></div>
     </header>
@@ -89,7 +89,7 @@
 
     <footer class="brand-foot">
       <div class="stripes" aria-hidden="true"><i></i><i></i><i></i></div>
-      <img src="logo.png" alt="Cooltek" class="logo">
+      <img src="../app/logo.png" alt="Cooltek" class="logo">
       <div class="contact" id="footContact"></div>
     </footer>
   </section>
@@ -125,6 +125,7 @@
     </div>
     <input type="search" id="jobSearch" placeholder="Search customer, address, job ref, serial…" autocomplete="off">
     <button type="button" class="btn-blank" id="btnBlank">+ New blank report</button>
+    <p class="other-form" id="otherForm"></p>
     <div class="job-list" id="jobList"></div>
   </div>
 </div>
@@ -169,6 +170,7 @@
 
 <div class="toast no-print" id="toast" hidden></div>
 
-<script src="app.js"></script>
+<script src="form.js"></script>
+<script src="../app/app.js"></script>
 </body>
 </html>

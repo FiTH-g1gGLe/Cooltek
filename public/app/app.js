@@ -1,9 +1,9 @@
-/* Cooltek Heating Service Report
+/* Cooltek form engine – shared by the service report (/reports/) and call-out form (/callout/).
    ------------------------------------------------------------------
    BUSINESS = the details printed in the PDF footer. Fill in the blanks.
-   FORM     = every field on the report. To add, remove or rename a field,
-              edit the lists. `keep: true` = carried over to the next visit,
-              `compare: true` = shows last visit's reading next to the new one. */
+   Each form's fields live in its own form.js (window.FORM) with settings in window.FORM_CONFIG.
+   FORM sections whose name starts with "details" use the stacked top layout; the rest use rows.
+   Each section fills the element whose id is the section name in kebab-case (detailsLeft → #details-left). */
 
 const BUSINESS = {
   phone: "01623 431028",
@@ -14,110 +14,11 @@ const BUSINESS = {
   extra: "",            // e.g. "MCS certified · F-Gas registered"
 };
 
-const YN = ["Yes", "No"];
-const YNNA = ["Yes", "No", "N/A"];
 
-const FORM = {
-  detailsLeft: [
-    { key: "jobRef", label: "Job reference number" },
-    { key: "date", label: "Date", type: "date" },
-    { key: "customer", label: "Customer name / contact number", split: ["customerName", "customerPhone"], keep: true,
-      placeholders: ["Name", "Phone"] },
-    { key: "engineer", label: "Engineer", keep: true },
-    { key: "installation", label: "Installation (year)", keep: true },
-  ],
-  detailsRight: [
-    { key: "address", label: "Site name / address", type: "textarea", rows: 2, keep: true },
-    { key: "w3w", label: "What3words location (if rural / difficult to find)", keep: true },
-    { key: "reason", label: "Reason for visit", keep: true },
-    { key: "warranty", label: "Warranty expiration date", keep: true },
-    { key: "nextService", label: "Next service due", type: "date" },
-  ],
-  outdoor: [
-    { key: "odLocation", label: "Outdoor unit location", keep: true },
-    { key: "odAtHeight", label: "Is the unit at height?", opts: YN, keep: true },
-    { key: "odAccess", label: "If yes, what access restrictions are there?", keep: true },
-    { key: "odClearance", label: "Sufficient clearance for servicing?", opts: YN, keep: true },
-    { key: "odModel", label: "Outdoor unit model", keep: true },
-    { key: "odServiceRef", label: "Outdoor unit service reference", keep: true },
-    { key: "odSerial", label: "Outdoor unit serial number", keep: true },
-    { key: "compHours", label: "Compressor running hours", num: true, compare: "up" },
-    { key: "compStarts", label: "Compressor start / stops", num: true, compare: "up" },
-    { key: "antifreeze", label: "Antifreeze protection level", unit: "°C", compare: true },
-    { key: "odVoltage", label: "Outdoor unit supply voltage", unit: "V", num: true },
-    { key: "odBreaker", label: "Breaker size", unit: "A", keep: true },
-    { key: "odCable", label: "Outdoor unit power supply cable size", unit: "mm²", keep: true },
-    { key: "odSoftware", label: "Outdoor unit software version", small: "(Request code 090)", keep: true },
-    { key: "flexis", label: "Flexis installed on water pipework?", opts: YN, keep: true },
-    { key: "commsCable", label: "Communication cable size (S1, S2 & S3)", unit: "mm²", keep: true },
-    { key: "afValves", label: "Antifreeze valves installed?", opts: YN, keep: true },
-    { key: "insulated", label: "Pipework sufficiently insulated", small: "(Must be Class O 19mm wall thickness)", opts: YN },
-  ],
-  indoor: [
-    { key: "cylLocation", label: "Cylinder location?", keep: true },
-    { key: "cylAccessible", label: "Cylinder easily accessible?", opts: YN, keep: true },
-    { key: "cylClearance", label: "Sufficient clearance for servicing?", opts: YN, keep: true },
-    { key: "cylModel", label: "Cylinder type / model", keep: true },
-    { key: "cylSerial", label: "Cylinder serial number", keep: true },
-    { key: "ftcModel", label: "Control board model number", keep: true },
-    { key: "ftcSerial", label: "Control board serial number", keep: true },
-    { key: "ftcVersion", label: "Control board version", keep: true },
-    { key: "ftcSoftware", label: "Control board software version", small: "(Request code 190)", keep: true },
-    { key: "coil", label: "Coil / heat exchanger size / kW rating", small: "(If OEM)", keep: true },
-    { key: "legFreq", label: "Legionella frequency setting", unit: "Days", keep: true },
-    { key: "legTemp", label: "Legionella target temperature", unit: "°C", keep: true },
-    { key: "flowHeat", label: "Primary water flow rate – heating", unit: "L/pm", compare: true },
-    { key: "flowDhw", label: "Primary water flow rate – DHW", unit: "L/pm", compare: true },
-    { key: "magFilter", label: "Magnetic filter / strainer cleaned?", opts: YN },
-    { key: "sdCard", label: "SD card installed & recording", opts: YN },
-    { key: "wifi", label: "Wi-Fi adaptor fitted and communicating?", opts: YN },
-    { key: "mac", label: "Wi-Fi MAC address", keep: true },
-    { key: "iuPower", label: "Indoor unit power supply", multi: ["Internal", "External"], keep: true },
-    { key: "iuBreaker", label: "Indoor unit breaker size", unit: "A", keep: true },
-  ],
-  electrical: [
-    { key: "elWiring", label: "All outdoor unit wiring connections checked for tightness?", opts: YN },
-    { key: "elVisual", label: "Visual check on outdoor unit electrical components, ok?", opts: YN },
-    { key: "elMains", label: "Mains cable correctly sized, and UV protected?", opts: YN },
-    { key: "elComms", label: "Communication cables installed correctly with no breaks or isolator installed?", opts: YN },
-    { key: "elIsoDist", label: "Mains isolator for outdoor unit installed within 1 metre?", opts: YN },
-    { key: "elIsoEntry", label: "Mains isolator cable entry from bottom?", opts: YN },
-    { key: "elIsoRated", label: "Mains isolator correctly rated?", opts: YN },
-  ],
-  unvented: [
-    { key: "uvLeaks", label: "Visual inspection, any signs of leaks?", opts: YN },
-    { key: "uvInstalled", label: "Is the cylinder installed correctly?", opts: YN },
-    { key: "uvDischarge", label: "Discharge pipework installed & terminated correctly?", opts: YN },
-    { key: "uvG3", label: "G3 unvented safety checks completed, ok?", opts: YN },
-    { key: "uvZone", label: "Zone valves all operating correctly?", opts: YN },
-    { key: "uvMinWater", label: "Minimum water quantity for outdoor unit size met?", opts: YN },
-    { key: "uvVolumizer", label: "System water volumizer installed?", opts: YN },
-    { key: "uvExpSize", label: "Expansion vessel size (domestic hot water)", unit: "L", keep: true },
-    { key: "uvExpCharged", label: "Expansion vessels checked and charged if required?", opts: YN },
-    { key: "uvPrv", label: "Pressure reducing valve installed?", opts: YN },
-    { key: "uvHardWater", label: "Hard water protection installed?", opts: YN },
-    { key: "uvMains", label: "Incoming water main pressure correct for cylinder specification?", opts: YN },
-  ],
-  heating: [
-    { key: "emitter", label: "Heat emitter type", opts: ["Radiators", "Under floor heating", "Radiators and UFH", "Other"], layout: "stack", keep: true },
-    { key: "tds", label: "Total dissolved solids meter reading / turbidity tube reading", opts: ["Pass", "Fail"] },
-    { key: "ufhInterlock", label: "Underfloor heating interlocked correctly with control board?", opts: YNNA, keep: true },
-    { key: "ufhPump", label: "Underfloor heating pump wired to control board?", opts: YNNA, keep: true },
-    { key: "heatMode", label: "System heating mode", opts: ["Weather compensation", "Auto adaption", "Fixed flow"], layout: "stack", keep: true },
-    { key: "thermostat", label: "Thermostat installed?", opts: ["ME Stat", "Third party", "Both"], keep: true },
-    { key: "bypass", label: "Bypass installed?", opts: YNNA, keep: true },
-    { key: "bypassSetting", label: "Bypass setting?", keep: true },
-    { key: "heatExp", label: "Expansion vessel size for heating system", unit: "L", keep: true },
-    { key: "consumed", label: "Consumed energy last year", unit: "kWh" },
-    { key: "delivered", label: "Delivered energy last year", unit: "kWh" },
-    { key: "scop", label: "Seasonal co-efficiency of performance", small: "(Reading for the year)" },
-  ],
-  timings: [
-    { key: "arrive", label: "Site arrival time", type: "time" },
-    { key: "depart", label: "Site departure time", type: "time" },
-  ],
-};
-
+const FORM = window.FORM, CFG = window.FORM_CONFIG || {};
+const STORE = CFG.store || "cooltek";
+const HAS = (k) => Object.values(FORM).some((sec) => sec.some((f) => f.key === k || (f.split || []).includes(k)));
+const blankState = () => { const s = { date: today() }; if (HAS("nextService")) s.nextService = plusYear(s.date); return s; };
 /* ================================================================== */
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
@@ -132,7 +33,7 @@ const DB = {
   db: null,
   open() {
     return new Promise((res, rej) => {
-      const r = indexedDB.open("cooltek", 1);
+      const r = indexedDB.open(STORE, 1);
       r.onupgradeneeded = () => r.result.createObjectStore("jobs", { keyPath: "id" });
       r.onsuccess = () => { this.db = r.result; res(); };
       r.onerror = () => rej(r.error);
@@ -193,10 +94,10 @@ function rowField(f) {
 }
 
 function build() {
-  $("#details-left").innerHTML = FORM.detailsLeft.map(detailField).join("");
-  $("#details-right").innerHTML = FORM.detailsRight.map(detailField).join("");
-  for (const sec of ["outdoor", "indoor", "electrical", "unvented", "heating", "timings"]) {
-    $("#" + sec).innerHTML = FORM[sec].map(rowField).join("");
+  for (const [sec, fields] of Object.entries(FORM)) {
+    const el = $("#" + sec.replace(/[A-Z]/g, (m) => "-" + m.toLowerCase()));
+    if (!el) continue;
+    el.innerHTML = fields.map(sec.startsWith("details") ? detailField : rowField).join("");
   }
   // Each typed box gets a twin used in the PDF, so long values wrap instead of being cut off
   for (const el of $$('input[data-key]:not([type=radio]):not([type=checkbox])')) {
@@ -282,11 +183,11 @@ function save(now) {
     state = readForm();
     try {
       const old = currentId ? await DB.get(currentId) : null;
-      if (old && !old.deleted && JSON.stringify(old.data) === JSON.stringify(state)) { lsSet("cooltek-current", currentId); return; }
+      if (old && !old.deleted && JSON.stringify(old.data) === JSON.stringify(state)) { lsSet(STORE + "-current", currentId); return; }
       if (!old && isBlank(state)) return;            // don't store or sync an untouched blank report
       if (!currentId) currentId = newId();
       await DB.put({ id: currentId, created: old ? old.created : Date.now(), updated: Date.now(), data: state, dirty: true });
-      lsSet("cooltek-current", currentId);
+      lsSet(STORE + "-current", currentId);
       note("Saved ✓");
       Sync.soon();
     } catch (e) { note("Couldn't save – storage full?"); }
@@ -307,9 +208,10 @@ const Sync = {
   busy: false, timer: null, status: "off",
   base() {
     const custom = (lsGet("cooltek-sync-url") || "").trim().replace(/\/+$/, "");
-    if (custom) return custom;
+    const area = CFG.api ? "/" + CFG.api : "";
+    if (custom) return custom + area;
     if (location.hostname.endsWith("github.io") || location.protocol === "file:") return "";
-    return location.origin + "/api";
+    return location.origin + "/api" + area;
   },
   key: () => lsGet("cooltek-sync-key") || "",
   enabled() { return !!(this.base() && this.key()); },
@@ -361,7 +263,7 @@ const Sync = {
     if (local && !local.dirty && local.updated === r.updated && !r.deleted) return; // already have it
     if (r.deleted) {
       if (local) await DB.del(r.id);
-      if (r.id === currentId) { currentId = null; state = { date: today(), nextService: plusYear(today()) }; writeForm(state); toast("This report was deleted on another device"); }
+      if (r.id === currentId) { currentId = null; state = blankState(); writeForm(state); toast("This report was deleted on another device"); }
       return;
     }
     const localPhotos = new Map(((local && local.data && local.data.photos) || []).filter((p) => p && p.id).map((p) => [p.id, p.src]));
@@ -531,19 +433,19 @@ function plusYear(v) { if (!v) return ""; const [y, m, d] = v.split("-"); return
 async function openJob(id) {
   const job = await DB.get(id);
   if (!job || job.deleted) return;
-  currentId = id; state = job.data || {}; lsSet("cooltek-current", id);
+  currentId = id; state = job.data || {}; lsSet(STORE + "-current", id);
   writeForm(state); window.scrollTo(0, 0);
 }
 async function newBlank() {
   await save(true);
-  currentId = null; state = { date: today(), nextService: plusYear(today()) };
+  currentId = null; state = blankState();
   writeForm(state); await save(true); window.scrollTo(0, 0);
 }
 async function nextVisitFrom(data) {
   await save(true);
   const n = {};
   for (const k of KEEP_KEYS) if (k in data) n[k] = data[k];
-  n.date = today(); n.nextService = plusYear(n.date);
+  n.date = today(); if (HAS("nextService")) n.nextService = plusYear(n.date);
   n.prev = { date: data.date || "", jobRef: data.jobRef || "", values: {} };
   for (const k of Object.keys(COMPARE)) if (data[k]) n.prev.values[k] = data[k];
   currentId = null; state = n; writeForm(state); await save(true); window.scrollTo(0, 0);
@@ -563,12 +465,13 @@ async function renderJobs() {
     const sub = [(d.address || "").replace(/\n/g, ", "), d.jobRef, fmtDate(d.date)].filter(Boolean).join(" · ");
     return `<div class="job${j.id === currentId ? " current" : ""}">
       <div class="job-main" data-open="${j.id}"><b>${esc(jobTitle(d))}</b><span>${esc(sub || "No details yet")}</span>${j.dirty && Sync.enabled() ? '<span class="unsynced">Not synced yet</span>' : ""}</div>
-      <div class="job-actions"><button type="button" data-next="${j.id}" title="Start next visit for this site">Next visit</button>
+      <div class="job-actions">${CFG.nextVisit === false ? "" : `<button type="button" data-next="${j.id}" title="Start next visit for this site">Next visit</button>`}
       <button type="button" class="del" data-delete="${j.id}" aria-label="Delete">🗑</button></div></div>`;
   }).join("") : `<div class="empty-list">${q ? "No matching jobs" : "No saved jobs yet"}</div>`;
 }
 function setupJobs() {
   const panel = $("#jobsPanel");
+  if (CFG.otherForm) $("#otherForm").innerHTML = `<a href="${CFG.otherForm.href}">${esc(CFG.otherForm.label)}</a>`;
   $("#btnJobs").addEventListener("click", async () => { await save(true); $("#jobSearch").value = ""; await renderJobs(); panel.hidden = false; });
   $("#jobSearch").addEventListener("input", renderJobs);
   $("#btnBlank").addEventListener("click", async () => { panel.hidden = true; await newBlank(); });
@@ -581,11 +484,12 @@ function setupJobs() {
       if (!confirm(`Delete "${jobTitle(j.data || {})}"? This can't be undone.`)) return;
       await DB.put({ ...j, deleted: true, dirty: true, updated: Date.now(), data: null });
       Sync.soon();
-      if (d.dataset.delete === currentId) { currentId = null; state = { date: today(), nextService: plusYear(today()) }; writeForm(state); }
+      if (d.dataset.delete === currentId) { currentId = null; state = blankState(); writeForm(state); }
       renderJobs();
     }
   });
-  $("#btnNewVisit").addEventListener("click", async () => {
+  if (CFG.nextVisit === false) $("#btnNewVisit").remove();
+  else $("#btnNewVisit").addEventListener("click", async () => {
     if (!confirm("Start the next visit for this site?\n\nThis report stays saved in Jobs. Customer, site and unit details are copied to a new report.")) return;
     await nextVisitFrom(readForm());
   });
@@ -600,8 +504,8 @@ let cssText = null, logoData = null;
 
 const toDataURL = (blob) => new Promise((r) => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(blob); });
 async function assets() {
-  if (cssText === null) cssText = await (await fetch("style.css")).text();
-  if (logoData === null) logoData = await toDataURL(await (await fetch("logo.png")).blob());
+  if (cssText === null) cssText = await (await fetch($('link[rel=stylesheet][href*="style.css"]').href)).text();
+  if (logoData === null) logoData = await toDataURL(await (await fetch($("img.logo").src)).blob());
 }
 
 function pdfPages() {
@@ -609,10 +513,10 @@ function pdfPages() {
   for (const el of $$("#pages input")) {
     if (el.type === "radio" || el.type === "checkbox") el.toggleAttribute("checked", el.checked);
   }
-  const pages = [$("#page1"), $("#page2")].map((p) => p.cloneNode(true));
+  const pages = $$("#pages > .page:not(#photosEditor)").map((p) => p.cloneNode(true));
   for (const p of pages) {
     p.removeAttribute("id");
-    for (const img of $$("img", p)) if (img.getAttribute("src") === "logo.png") img.src = logoData;
+    for (const img of $$("img", p)) if (img.classList.contains("logo")) img.src = logoData;
     for (const c of $$("canvas[data-sig]", p)) {
       const img = document.createElement("img"); const src = state[c.dataset.sig];
       if (src) img.src = src; else img.src = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
@@ -677,7 +581,7 @@ function buildPdf(jpegs) {
 
 function pdfName(s) {
   const first = (s.address || "").split(/[\n,]/)[0].trim();
-  return ["Service Report", s.jobRef, first].filter(Boolean).join(" - ").replace(/[\\/:*?"<>|]+/g, "").slice(0, 90) + ".pdf";
+  return [CFG.pdfTitle || "Report", s.jobRef, first].filter(Boolean).join(" - ").replace(/[\\/:*?"<>|]+/g, "").slice(0, 90) + ".pdf";
 }
 
 let lastPdf = null;
@@ -720,7 +624,8 @@ async function start() {
   setupRadios(); setupSigs(); setupPhotos(); setupJobs(); setupPdf();
   document.addEventListener("input", (e) => {
     if (!e.target.matches("[data-key]")) return;
-    if (e.target.dataset.key === "date" && !$("#f-nextService").value) $("#f-nextService").value = plusYear(e.target.value);
+    if (e.target.dataset.key === "date" && $("#f-nextService") && !$("#f-nextService").value) $("#f-nextService").value = plusYear(e.target.value);
+    if (typeof CFG.derive === "function") CFG.derive(e.target.dataset.key, (k) => $(`#f-${k}`));
     refreshDerived(); save();
   });
   document.addEventListener("change", (e) => { if (e.target.matches("[data-key]")) save(); });
@@ -728,15 +633,15 @@ async function start() {
   await DB.open();
   // bring over a report saved by the first version of the app
   const legacy = lsGet("cooltek-report-v1");
-  if (legacy && !lsGet("cooltek-migrated")) {
-    try { const d = JSON.parse(legacy); if (d && Object.keys(d).length > 2) { const id = newId(); await DB.put({ id, created: Date.now(), updated: Date.now(), data: d, dirty: true }); lsSet("cooltek-current", id); } } catch (_) {}
+  if (STORE === "cooltek" && legacy && !lsGet("cooltek-migrated")) {
+    try { const d = JSON.parse(legacy); if (d && Object.keys(d).length > 2) { const id = newId(); await DB.put({ id, created: Date.now(), updated: Date.now(), data: d, dirty: true }); lsSet(STORE + "-current", id); } } catch (_) {}
     lsSet("cooltek-migrated", "1");
   }
-  const cur = lsGet("cooltek-current");
+  const cur = lsGet(STORE + "-current");
   const curJob = cur && (await DB.get(cur));
   const job = (curJob && !curJob.deleted && curJob) || (await DB.all()).filter((j) => !j.deleted).sort((a, b) => b.updated - a.updated)[0];
   if (job) await openJob(job.id);
-  else { state = { date: today(), nextService: plusYear(today()) }; writeForm(state); }
+  else { state = blankState(); writeForm(state); }
   Sync.init();
 }
 start();

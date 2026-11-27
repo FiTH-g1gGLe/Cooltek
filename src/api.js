@@ -27,6 +27,8 @@ async function setup(db) {
   await db.batch([
     db.prepare("CREATE TABLE IF NOT EXISTS jobs (id TEXT PRIMARY KEY, updated INTEGER NOT NULL, server_ts INTEGER NOT NULL, deleted INTEGER NOT NULL DEFAULT 0, data TEXT)"),
     db.prepare("CREATE INDEX IF NOT EXISTS jobs_server_ts ON jobs(server_ts)"),
+    db.prepare("CREATE TABLE IF NOT EXISTS callout_jobs (id TEXT PRIMARY KEY, updated INTEGER NOT NULL, server_ts INTEGER NOT NULL, deleted INTEGER NOT NULL DEFAULT 0, data TEXT)"),
+    db.prepare("CREATE INDEX IF NOT EXISTS callout_jobs_server_ts ON callout_jobs(server_ts)"),
     db.prepare("CREATE TABLE IF NOT EXISTS photos (id TEXT PRIMARY KEY, job_id TEXT, data TEXT NOT NULL, created INTEGER NOT NULL)"),
   ]);
   ready = true;
@@ -43,7 +45,11 @@ export async function onRequest({ request, env, params }) {
 
   const db = env.DB;
   await setup(db);
-  const [kind, id] = params.path || [];
+  // each form keeps its jobs in its own table: /api/jobs = service reports, /api/callout/jobs = call-out forms
+  const parts = [...(params.path || [])];
+  const AREAS = { callout: "callout_jobs" };
+  const table = AREAS[parts[0]] ? AREAS[parts.shift()] : "jobs";
+  const [kind, id] = parts;
   const url = new URL(request.url);
 
   try {
@@ -53,12 +59,12 @@ export async function onRequest({ request, env, params }) {
     if (kind === "jobs" && !id && request.method === "GET") {
       const since = Number(url.searchParams.get("since")) || 0;
       const { results } = await db.prepare(
-        "SELECT id, updated, server_ts, deleted, data FROM jobs WHERE server_ts > ? ORDER BY server_ts LIMIT 200").bind(since).all();
+        `SELECT id, updated, server_ts, deleted, data FROM ${table} WHERE server_ts > ? ORDER BY server_ts LIMIT 200`).bind(since).all();
       const jobs = results.map((r) => ({ id: r.id, updated: r.updated, server_ts: r.server_ts, deleted: !!r.deleted, data: r.data ? JSON.parse(r.data) : null }));
       return json({ jobs, cursor: jobs.length ? jobs[jobs.length - 1].server_ts : since, more: jobs.length === 200 });
     }
     if (kind === "jobs" && id && request.method === "GET") {
-      const r = await db.prepare("SELECT id, updated, server_ts, deleted, data FROM jobs WHERE id = ?").bind(id).first();
+      const r = await db.prepare(`SELECT id, updated, server_ts, deleted, data FROM ${table} WHERE id = ?`).bind(id).first();
       if (!r) return json({ error: "Not found" }, 404);
       return json({ id: r.id, updated: r.updated, server_ts: r.server_ts, deleted: !!r.deleted, data: r.data ? JSON.parse(r.data) : null });
     }
@@ -66,11 +72,11 @@ export async function onRequest({ request, env, params }) {
       if (!ID.test(id)) return json({ error: "Bad id" }, 400);
       const body = await request.json();
       const updated = Number(body.updated) || 0;
-      const existing = await db.prepare("SELECT updated FROM jobs WHERE id = ?").bind(id).first();
+      const existing = await db.prepare(`SELECT updated FROM ${table} WHERE id = ?`).bind(id).first();
       if (existing && existing.updated > updated) return json({ accepted: false, reason: "newer copy on server" });
       const ts = serverTs();
       await db.prepare(
-        "INSERT INTO jobs (id, updated, server_ts, deleted, data) VALUES (?1, ?2, ?3, ?4, ?5) " +
+        `INSERT INTO ${table} (id, updated, server_ts, deleted, data) VALUES (?1, ?2, ?3, ?4, ?5) ` +
         "ON CONFLICT(id) DO UPDATE SET updated = ?2, server_ts = ?3, deleted = ?4, data = ?5")
         .bind(id, updated, ts, body.deleted ? 1 : 0, body.deleted ? null : JSON.stringify(body.data || {})).run();
       if (body.deleted) await db.prepare("DELETE FROM photos WHERE job_id = ?").bind(id).run();

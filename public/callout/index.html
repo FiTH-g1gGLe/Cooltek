@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cooltek – Call-out Form</title>
+<meta name="theme-color" content="#1b1f5e">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="../app/style.css">
+</head>
+<body>
+
+<div id="pages">
+  <!-- PAGE 1 -->
+  <section class="page" id="page1">
+    <header class="brand-head">
+      <img src="../app/logo.png" alt="Cooltek" class="logo">
+      <div class="title"><span>Call-out</span> Report</div>
+      <div class="stripes" aria-hidden="true"><i></i><i></i><i></i></div>
+    </header>
+
+    <div class="details">
+      <div class="col" id="details-left"></div>
+      <div class="col" id="details-right"></div>
+    </div>
+
+    <div class="two-col">
+      <div class="block">
+        <h2>Time on site</h2>
+        <div id="onsite"></div>
+      </div>
+      <div class="block">
+        <h2>Travel</h2>
+        <div id="travel"></div>
+      </div>
+    </div>
+
+    <div class="block note tall">
+      <h2><label for="f-jobDescription">Job description</label></h2>
+      <textarea id="f-jobDescription" data-key="jobDescription" rows="8" placeholder="What was wrong, what was found and what was done"></textarea>
+      <div class="print-text" data-mirror="jobDescription"></div>
+    </div>
+
+    <div class="block note tall">
+      <h2><label for="f-materials">Materials needed</label></h2>
+      <textarea id="f-materials" data-key="materials" rows="6" placeholder="Parts and quantities, one per line"></textarea>
+      <div class="print-text" data-mirror="materials"></div>
+    </div>
+
+    <footer class="brand-foot">
+      <div class="stripes" aria-hidden="true"><i></i><i></i><i></i></div>
+      <img src="../app/logo.png" alt="Cooltek" class="logo">
+      <div class="contact" id="footContact"></div>
+    </footer>
+  </section>
+
+  <!-- Photos (on screen only; the PDF gets its own photo pages) -->
+  <section class="page photos-page no-print" id="photosEditor">
+    <div class="block">
+      <h2>Site visit images</h2>
+      <p class="hint">Photos go on extra pages at the end of the PDF, 6 per page. Add a caption under each one if you like.</p>
+      <div class="photo-grid" id="photoGrid"></div>
+      <label class="add-photos">
+        <input type="file" accept="image/*" multiple id="photoInput" hidden>
+        <span>+ Add site photos</span>
+      </label>
+    </div>
+  </section>
+</div>
+
+<nav class="toolbar no-print">
+  <button type="button" class="btn" id="btnJobs">☰ Jobs</button>
+  <button type="button" class="btn primary" id="btnPdf">Create PDF</button>
+  <button type="button" class="btn" id="btnNewVisit" title="Start next visit for this site">Next visit</button>
+  <button type="button" class="sync-chip" id="syncChip" data-state="off">Sync off</button>
+  <span class="saved" id="savedNote"></span>
+</nav>
+
+<!-- Jobs panel -->
+<div class="overlay no-print" id="jobsPanel" hidden>
+  <div class="panel">
+    <div class="panel-head">
+      <h3>Jobs</h3>
+      <button type="button" class="x" data-close aria-label="Close">×</button>
+    </div>
+    <input type="search" id="jobSearch" placeholder="Search customer, address, job ref, serial…" autocomplete="off">
+    <button type="button" class="btn-blank" id="btnBlank">+ New call-out form</button>
+    <p class="other-form" id="otherForm"></p>
+    <div class="job-list" id="jobList"></div>
+  </div>
+</div>
+
+<!-- PDF ready sheet -->
+<div class="overlay no-print" id="pdfSheet" hidden>
+  <div class="panel small">
+    <div class="panel-head">
+      <h3>PDF ready</h3>
+      <button type="button" class="x" data-close aria-label="Close">×</button>
+    </div>
+    <p class="pdf-name" id="pdfName"></p>
+    <div class="sheet-actions">
+      <button type="button" class="btn primary big" id="btnShare">Share / send</button>
+      <button type="button" class="btn dark big" id="btnDownload">Download</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sync settings -->
+<div class="overlay no-print" id="syncSheet" hidden>
+  <div class="panel small">
+    <div class="panel-head">
+      <h3>Sync between devices</h3>
+      <button type="button" class="x" data-close aria-label="Close">×</button>
+    </div>
+    <p class="sheet-text">Enter the Cooltek access code once on each phone, tablet and PC (the same code as the service reports). Reports then appear on all of them. Reports are always saved on this device first, so it still works with no signal.</p>
+    <label class="field-label" for="syncKey">Access code</label>
+    <input type="password" id="syncKey" class="field" autocomplete="off" placeholder="Ask the office for the code">
+    <div id="syncUrlRow">
+      <label class="field-label" for="syncUrl">Server address</label>
+      <input type="url" id="syncUrl" class="field" autocomplete="off" placeholder="https://your-site.pages.dev/api">
+      <p class="sheet-text small">Only needed if this app isn't opened from the Cooltek Cloudflare site.</p>
+    </div>
+    <p class="sync-status" id="syncStatus"></p>
+    <div class="sheet-actions">
+      <button type="button" class="btn primary big" id="btnSyncSave">Save &amp; sync</button>
+      <button type="button" class="btn dark big" id="btnSyncNow">Sync now</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast no-print" id="toast" hidden></div>
+
+<script src="form.js"></script>
+<script src="../app/app.js"></script>
+</body>
+</html>
