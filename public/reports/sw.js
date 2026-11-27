@@ -1,5 +1,5 @@
 // Lets the service report work with no signal. Bump VERSION after changing files.
-const PREFIX = "cooltek-reports-", VERSION = PREFIX + "7";
+const PREFIX = "cooltek-reports-", VERSION = PREFIX + "8";
 const FILES = ["./", "index.html", "form.js", "../app/app.js", "../app/style.css", "../app/logo.png", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png"];
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(VERSION).then((c) => c.addAll(FILES)).then(() => self.skipWaiting()));
